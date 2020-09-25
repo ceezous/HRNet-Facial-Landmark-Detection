@@ -187,11 +187,24 @@ def inference(config, data_loader, model):
     end = time.time()
 
     with torch.no_grad():
-        for i, (inp, target, meta) in enumerate(data_loader):
+        for i, (inp, target, meta, imgs_input) in enumerate(data_loader):
             data_time.update(time.time() - end)
             output = model(inp)
             score_map = output.data.cpu()
             preds = decode_preds(score_map, meta['center'], meta['scale'], [64, 64])
+
+            # 将预测点画在图像上并保存
+            if 1:
+                import cv2
+                for j, img in enumerate(imgs_input):
+                    path_out = img[:-10] + "_origin.jpg"
+                    # path_out = img[:-10] + "_degrade.jpg"
+                    img = cv2.imread(img)
+                    for pred in preds[j]:
+                        cv2.circle(img, (pred[0].int().item(), pred[1].int().item()), 1, (0,255,255))
+                    if not cv2.imwrite(path_out, img):
+                        raise Exception("Could not write image.")
+                    print(i, j)
 
             # NME
             nme_temp = compute_nme(preds, meta)

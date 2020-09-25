@@ -60,7 +60,25 @@ class Face300W(data.Dataset):
 
         scale *= 1.25
         nparts = pts.shape[0]
-        img = np.array(Image.open(image_path).convert('RGB'), dtype=np.float32)
+
+        # 添加图像退化部分
+        # img = np.array(Image.open(image_path).convert('RGB'), dtype=np.float32)
+        img = Image.open(image_path).convert('RGB')
+        if 1:
+            from crz_degradation_medium import img_deg
+            # degradation
+            choice = 1.0
+            if self.is_train:
+                choice = 0.5
+            img = img_deg(img, choice=choice)
+            # save image
+            img_name = self.landmarks_frame.iloc[idx, 0].split('/')[1]
+            if self.is_train:
+                img.save("./visual/train_300w/" + img_name[:-4] + "_degrade.jpg")
+            else:
+                img_input = "./visual/compare_300w/" + img_name[:-4] + "_medium_input.jpg"
+                img.save(img_input)
+        img = np.array(img, dtype=np.float32)
 
         r = 0
         if self.is_train:
@@ -94,7 +112,7 @@ class Face300W(data.Dataset):
         meta = {'index': idx, 'center': center, 'scale': scale,
                 'pts': torch.Tensor(pts), 'tpts': tpts}
 
-        return img, target, meta
+        return img, target, meta, img_input
 
 
 if __name__ == '__main__':

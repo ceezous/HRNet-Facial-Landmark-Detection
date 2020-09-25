@@ -112,3 +112,6 @@ hrnetv2_pretrained/
 output
 log
 *.swp
+
+# visualization parts
+visual

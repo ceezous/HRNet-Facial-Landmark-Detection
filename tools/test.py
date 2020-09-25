@@ -56,13 +56,18 @@ def main():
     gpus = list(config.GPUS)
     model = nn.DataParallel(model, device_ids=gpus).cuda()
 
-    # load model
+    # load model new
     state_dict = torch.load(args.model_file)
-    if 'state_dict' in state_dict.keys():
-        state_dict = state_dict['state_dict']
-        model.load_state_dict(state_dict)
-    else:
-        model.module.load_state_dict(state_dict)
+    model.load_state_dict(state_dict) # origin for 300w
+    # model.module.load_state_dict(state_dict) # else
+
+    # load model
+    # state_dict = torch.load(args.model_file)
+    # if 'state_dict' in state_dict.keys():
+    #     state_dict = state_dict['state_dict']
+    #     model.load_state_dict(state_dict)
+    # else:
+    #     model.module.load_state_dict(state_dict)
 
     dataset_type = get_dataset(config)
 
