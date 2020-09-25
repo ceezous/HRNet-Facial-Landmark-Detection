@@ -58,8 +58,8 @@ def main():
 
     # load model new
     state_dict = torch.load(args.model_file)
-    model.load_state_dict(state_dict) # origin for 300w
-    # model.module.load_state_dict(state_dict) # else
+    # model.load_state_dict(state_dict) # origin for 300w
+    model.module.load_state_dict(state_dict) # else
 
     # load model
     # state_dict = torch.load(args.model_file)

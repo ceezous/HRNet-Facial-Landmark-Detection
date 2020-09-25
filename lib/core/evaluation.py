@@ -35,6 +35,19 @@ def get_preds(scores):
 
 def compute_nme(preds, meta):
 
+    # 打印preds和meta的形状
+    if 0:
+        print(type(preds), type(meta))
+        print(preds.shape)
+        print(meta.keys())
+        print(type(meta["index"]))
+        print(meta["index"].shape)
+        print(meta["center"].shape)
+        print(meta["scale"].shape)
+        print(meta["pts"].shape)
+        print(meta["tpts"].shape)
+        assert 1==2
+
     targets = meta['pts']
     preds = preds.numpy()
     target = targets.cpu().numpy()

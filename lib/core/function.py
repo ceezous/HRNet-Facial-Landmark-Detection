@@ -197,17 +197,39 @@ def inference(config, data_loader, model):
             if 1:
                 import cv2
                 for j, img in enumerate(imgs_input):
-                    path_out = img[:-10] + "_origin.jpg"
-                    # path_out = img[:-10] + "_degrade.jpg"
+                    # path_out = img[:-10] + "_origin.jpg"
+                    path_out = img[:-10] + "_degrade.jpg"
                     img = cv2.imread(img)
                     for pred in preds[j]:
                         cv2.circle(img, (pred[0].int().item(), pred[1].int().item()), 1, (0,255,255))
                     if not cv2.imwrite(path_out, img):
                         raise Exception("Could not write image.")
                     print(i, j)
+            if 0:
+                import pprint
+                print(type(inp))
+                print(inp.shape)
+                pprint.pprint(img_paths)
+                # assert 1==2
 
             # NME
             nme_temp = compute_nme(preds, meta)
+
+            if 1: # 将图片路径与nme加入数据库，方便比对
+                print(i)
+                import sqlite3
+                conn = sqlite3.connect("nme.db")
+                c = conn.cursor()
+                for i in range(inp.shape[0]):
+                    c.execute(
+                        f'''
+                            INSERT INTO nme
+                            VALUES("{imgs_input[i]}", "dgr", {nme_temp[i]})
+                        '''
+                    )
+                print("insert succeeded")
+                conn.commit()
+                conn.close()
 
             failure_008 = (nme_temp > 0.08).sum()
             failure_010 = (nme_temp > 0.10).sum()

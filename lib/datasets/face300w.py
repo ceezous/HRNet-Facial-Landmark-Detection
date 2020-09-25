@@ -61,10 +61,13 @@ class Face300W(data.Dataset):
         scale *= 1.25
         nparts = pts.shape[0]
 
+        ### 
         # 添加图像退化部分
         # img = np.array(Image.open(image_path).convert('RGB'), dtype=np.float32)
         img = Image.open(image_path).convert('RGB')
         if 1:
+            # print(image_path[18:])
+            # assert 1==2
             from crz_degradation_medium import img_deg
             # degradation
             choice = 1.0
@@ -72,13 +75,14 @@ class Face300W(data.Dataset):
                 choice = 0.5
             img = img_deg(img, choice=choice)
             # save image
-            img_name = self.landmarks_frame.iloc[idx, 0].split('/')[1]
+            img_name = image_path[19:]
             if self.is_train:
                 img.save("./visual/train_300w/" + img_name[:-4] + "_degrade.jpg")
             else:
                 img_input = "./visual/compare_300w/" + img_name[:-4] + "_medium_input.jpg"
                 img.save(img_input)
         img = np.array(img, dtype=np.float32)
+        ###
 
         r = 0
         if self.is_train:
